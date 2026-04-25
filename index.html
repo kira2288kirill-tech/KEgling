@@ -33,6 +33,14 @@
             <a href="#" onclick="showSection('about'); return false;">О нас</a>
             <a href="#" id="cart-nav-link" onclick="toggleMiniCart(event); return false;">Корзина (<span id="cart-count">0</span>)</a>
         </nav>
+        <label class="language-picker" for="language-select">
+            <span id="language-picker-label" class="language-picker__label">Язык</span>
+            <select id="language-select" class="language-picker__select" aria-label="Выбор языка">
+                <option value="ru">Русский</option>
+                <option value="uk">Українська</option>
+                <option value="en">English</option>
+            </select>
+        </label>
     </header>
 
     <div id="mini-cart" class="mini-cart" aria-hidden="true">
@@ -276,6 +284,7 @@
 
     <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script defer src="script.js"></script>
+    <script defer src="i18n.js"></script>
     <script defer src="premium-motion.js"></script>
 </body>
 </html>
