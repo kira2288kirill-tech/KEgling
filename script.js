@@ -1777,6 +1777,34 @@ async function fetchTelegramConfigPayload() {
     return null;
 }
 
+function notifyTelegramWebhookIssues(payload) {
+    if (!payload || location.protocol !== "https:") return;
+    if (payload.botTokenSet === false) {
+        showToast(
+            "Бот не настроен",
+            "На сервере нет TELEGRAM_BOT_TOKEN. Добавь переменную в Vercel / Netlify → Environment Variables и сделай Redeploy.",
+            "error"
+        );
+        return;
+    }
+    if (payload.botTokenSet && !payload.siteUrlResolved) {
+        showToast(
+            "Webhook",
+            "Сервер не смог определить публичный URL сайта. Открой сайт по обычному HTTPS-домену (не с диска).",
+            "error"
+        );
+        return;
+    }
+    if (payload.telegramWebhookOk === false && payload.webhookFullUrl) {
+        const detail = String(payload.telegramWebhookDescription || "").slice(0, 320);
+        showToast(
+            "Бот не получит сообщения",
+            `Webhook не подтверждён. ${detail || "Проверь ответ Telegram в Network → /api/config."}`,
+            "error"
+        );
+    }
+}
+
 function initTelegramLink() {
     const telegramLink = document.getElementById("telegram-link");
     if (!telegramLink) return;
@@ -1790,6 +1818,7 @@ function initTelegramLink() {
             telegramLink.href = payload.telegramUrl;
             telegramLink.target = "_blank";
             telegramLink.rel = "noopener noreferrer";
+            notifyTelegramWebhookIssues(payload);
         } else if (location.protocol === "https:" && typeof window.__keglingTelegramOfflineToast === "function") {
             window.__keglingTelegramOfflineToast();
         }
