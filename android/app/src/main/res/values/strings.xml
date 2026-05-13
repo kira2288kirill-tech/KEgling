@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kegling</string>
+    <string name="title_activity_main">Kegling</string>
+    <string name="package_name">com.kegling.app</string>
+    <string name="custom_url_scheme">com.kegling.app</string>
+</resources>

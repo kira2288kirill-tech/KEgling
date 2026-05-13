@@ -1,0 +1,14 @@
+{
+  "name": "kegling-shop-2-copy",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.6.2",
+    "@capacitor/cli": "^7.6.2",
+    "@capacitor/core": "^7.6.2"
+  }
+}

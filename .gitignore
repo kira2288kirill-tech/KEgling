@@ -1,2 +1,14 @@
 .env
 *.class
+
+node_modules/
+.tools/
+
+# Android / Capacitor build outputs
+android/.gradle/
+android/**/build/
+android/**/.cxx/
+android/local.properties
+*.apk
+*.aab
+.DS_Store
