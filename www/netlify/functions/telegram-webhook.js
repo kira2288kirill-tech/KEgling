@@ -1,5 +1,5 @@
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
-const BOT_USERNAME = process.env.TELEGRAM_BOT_USERNAME || "KEgling_SHOPP_bot";
+const BOT_USERNAME = process.env.TELEGRAM_BOT_USERNAME || "KEgling_chop_BOT";
 const OWNER_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 const OWNER_COMMAND = "/owner";
 
@@ -124,15 +124,8 @@ async function handleMessage(message) {
     }
 
     const orderId = `KEG-${Date.now().toString().slice(-6)}`;
-    const customerMessage = [
-        "Заказ принят.",
-        `Номер: ${orderId}`,
-        "",
-        "Мы получили твой заказ и скоро свяжемся с тобой.",
-        "Если хочешь выбрать что-то еще, открой каталог кнопкой ниже."
-    ].join("\n");
-
-    await sendMessage(chatId, customerMessage, {
+    const customerFull = buildOrderDetailsText(orderId, customer, draft, message.from, { audience: "customer" });
+    await sendLongMessage(chatId, customerFull, {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "Каталог", callback_data: "catalog" }]
@@ -142,13 +135,17 @@ async function handleMessage(message) {
 
     const ownerChatId = OWNER_CHAT_ID || await resolveOwnerChatId();
     if (ownerChatId) {
-        await sendMessage(ownerChatId, buildOwnerNotification(orderId, customer, draft, message.from));
+        const ownerText = buildOrderDetailsText(orderId, customer, draft, message.from, { audience: "owner" });
+        await sendLongMessage(ownerChatId, ownerText);
     }
 }
 
 async function handleStart(chatId, payload) {
     if (!payload || payload === "catalog") {
-        await sendMainMenu(chatId, `Привет. Я бот магазина KEgling: @${BOT_USERNAME}. Здесь можно посмотреть каталог и оформить заказ.`);
+        await sendMainMenu(
+            chatId,
+            `Привет! Я бот заказов KEgling (@${BOT_USERNAME}). Открой «Каталог» или оформи корзину на сайте и перейди сюда по кнопке — подставлю товары и попрошу контакты.`
+        );
         return;
     }
 
@@ -160,14 +157,11 @@ async function handleStart(chatId, payload) {
         }
 
         const summary = [
-            "Я получил твой заказ с сайта.",
+            "Я получил твой заказ с сайта. Ниже полный состав — проверь размеры и сумму.",
             "",
-            "Выбрано:",
-            ...draft.items.map(formatDraftItem),
+            formatDraftBlock(draft.items),
             "",
-            `Итого: ${calculateTotal(draft.items)} грн`,
-            "",
-            "Теперь пришли одним сообщением:",
+            "Теперь пришли одним сообщением (через точку с запятой):",
             "Имя Фамилия; Телефон; Email"
         ].join("\n");
 
@@ -207,8 +201,7 @@ async function handleCallback(callbackQuery) {
             [
                 "Отлично, продолжаем оформление.",
                 "",
-                "Выбрано:",
-                formatDraftItem(draft.items[0]),
+                formatDraftBlock(draft.items),
                 "",
                 "Теперь пришли одним сообщением:",
                 "Имя Фамилия; Телефон; Email"
@@ -273,29 +266,70 @@ async function sendCustomerPrompt(chatId, draft, text) {
     });
 }
 
-function buildOwnerNotification(orderId, customer, draft, fromUser) {
-    const username = fromUser?.username ? `@${fromUser.username}` : "без username";
-    return [
-        "Новый покупатель",
-        `Заказ: ${orderId}`,
-        `Telegram: ${username}`,
-        "",
-        `Имя: ${customer.name}`,
-        `Телефон: ${customer.phone}`,
-        `Email: ${customer.email}`,
-        "",
-        "Товары:",
-        ...draft.items.map(formatDraftItem),
-        "",
-        `Итого: ${calculateTotal(draft.items)} грн`
-    ].join("\n");
+function formatOrderDateRu() {
+    return new Date().toLocaleString("ru-RU", {
+        timeZone: "Europe/Kyiv",
+        dateStyle: "long",
+        timeStyle: "short"
+    });
 }
 
-function formatDraftItem(item) {
+function formatTelegramBuyer(fromUser) {
+    if (!fromUser) return "данные Telegram недоступны";
+    const lines = [];
+    const fullName = [fromUser.first_name, fromUser.last_name].filter(Boolean).join(" ");
+    if (fullName) lines.push(`Имя в Telegram: ${fullName}`);
+    if (fromUser.username) lines.push(`Username: @${fromUser.username}`);
+    lines.push(`Chat id: ${fromUser.id}`);
+    if (fromUser.language_code) lines.push(`Язык интерфейса: ${fromUser.language_code}`);
+    if (fromUser.is_premium) lines.push("Telegram Premium: да");
+    return lines.join("\n");
+}
+
+function formatDraftItemLine(item, index) {
     const product = PRODUCTS[item.id];
-    if (!product) return "Неизвестный товар";
-    const sizeText = item.size && item.size !== "none" ? ` / ${item.size}` : "";
-    return `1 x ${product.title}${sizeText} / ${product.price} грн`;
+    const n = typeof index === "number" ? `${index + 1}) ` : "— ";
+    if (!product) return `${n}Неизвестный товар (id: ${item.id || "?"})`;
+    const size = item.size && item.size !== "none" ? item.size : "без размера / единый";
+    return `${n}${product.title}\n   Размер: ${size}\n   Описание: ${product.description}\n   Цена: ${product.price} грн`;
+}
+
+function formatDraftBlock(items) {
+    const lines = items.map((item, i) => formatDraftItemLine(item, i));
+    const total = calculateTotal(items);
+    return ["Состав заказа:", "", ...lines, "", `Позиций: ${items.length}`, `Сумма: ${total} грн`].join("\n");
+}
+
+function buildOrderDetailsText(orderId, customer, draft, fromUser, { audience }) {
+    const items = draft.items || [];
+    const total = calculateTotal(items);
+    const header =
+        audience === "owner"
+            ? ["🛒 Новый заказ (KEgling)", `Номер: ${orderId}`, `Создан: ${formatOrderDateRu()}`]
+            : ["✅ Заказ принят — сохрани эту сводку.", `Номер заказа: ${orderId}`, `Дата и время: ${formatOrderDateRu()}`];
+
+    const contacts = [
+        "",
+        "—— Контакты покупателя ——",
+        `Имя и фамилия: ${customer.name}`,
+        `Телефон: ${customer.phone}`,
+        `Email: ${customer.email}`
+    ];
+
+    const tg = ["", "—— Покупатель в Telegram ——", formatTelegramBuyer(fromUser)];
+
+    const goods = ["", "—— Товары (подробно) ——", ...items.map((item, i) => formatDraftItemLine(item, i)), "", `Позиций в заказе: ${items.length}`, `Итого к оплате: ${total} грн`];
+
+    const footer =
+        audience === "owner"
+            ? ["", "Свяжись с клиентом для подтверждения, оплаты и доставки."]
+            : [
+                  "",
+                  "Дальше мы свяжемся с тобой по телефону или почте для подтверждения и доставки.",
+                  "Если нужно что-то изменить — напиши нам в ответ на это сообщение или снова оформи заказ на сайте."
+              ];
+
+    return [...header, ...contacts, ...tg, ...goods, ...footer].join("\n");
 }
 
 function calculateTotal(items) {
@@ -379,6 +413,36 @@ async function resolveOwnerChatId() {
 
     const ownerUpdate = [...data.result].reverse().find((item) => item?.message?.text?.trim() === OWNER_COMMAND);
     return ownerUpdate?.message?.chat?.id ? String(ownerUpdate.message.chat.id) : "";
+}
+
+const TELEGRAM_MAX_MESSAGE = 4096;
+
+function chunkTelegramText(text, maxLen = TELEGRAM_MAX_MESSAGE - 80) {
+    if (text.length <= maxLen) return [text];
+    const chunks = [];
+    let rest = text;
+    while (rest.length) {
+        if (rest.length <= maxLen) {
+            chunks.push(rest);
+            break;
+        }
+        let at = rest.lastIndexOf("\n\n", maxLen);
+        if (at < maxLen * 0.4) at = rest.lastIndexOf("\n", maxLen);
+        if (at < maxLen * 0.3) at = maxLen;
+        chunks.push(rest.slice(0, at).trimEnd());
+        rest = rest.slice(at).trimStart();
+    }
+    return chunks;
+}
+
+async function sendLongMessage(chatId, text, lastMessageExtra = {}) {
+    const parts = chunkTelegramText(text);
+    const total = parts.length;
+    for (let i = 0; i < total; i++) {
+        const isLast = i === total - 1;
+        const body = total > 1 ? `(${i + 1}/${total})\n${parts[i]}` : parts[i];
+        await sendMessage(chatId, body, isLast ? lastMessageExtra : {});
+    }
 }
 
 async function sendMessage(chatId, text, extra = {}) {

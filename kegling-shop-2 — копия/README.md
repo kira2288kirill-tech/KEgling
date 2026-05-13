@@ -9,7 +9,7 @@ This project is prepared for Netlify Functions:
 
 For the first successful order:
 
-[@KEgling_SHOPP_bot](https://t.me/KEgling_SHOPP_bot)
+[@KEgling_chop_BOT](https://t.me/KEgling_chop_BOT)
 
 1. Open the site once after deploy so it can register the webhook.
 2. Open the bot and send `/start`.

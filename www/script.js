@@ -16,7 +16,7 @@ let selectedReviewRating = 0;
 let currentGalleryImages = [];
 let currentGalleryIndex = 0;
 let currentGalleryPosition = "center center";
-const BOT_USERNAME = "KEgling_SHOPP_bot";
+const BOT_USERNAME = "KEgling_chop_BOT";
 const FAVORITES_KEY = "kegling-favorites";
 const REVIEWS_KEY = "kegling-user-reviews";
 const RECENTLY_VIEWED_KEY = "kegling-recently-viewed";
@@ -334,6 +334,7 @@ initMiniCartUi();
 initOrderFormFields();
 initReviewForm();
 initGalleryControls();
+initLookbook();
 renderCatalog();
 renderRecentlyViewed();
 initTelegramLink();
@@ -532,6 +533,54 @@ function computeCatalogPriceCeiling() {
     return rounded || 5000;
 }
 
+function canQuickAddProduct(product) {
+    return Boolean(product && !product.sizes && !product.variants);
+}
+
+function animateFlyToCartFromElement(sourceEl) {
+    const cartCount = document.getElementById("cart-count");
+    if (!sourceEl || !cartCount) return;
+    const imageRect = sourceEl.getBoundingClientRect();
+    const cartRect = cartCount.getBoundingClientRect();
+    const flyer = sourceEl.cloneNode(true);
+    flyer.className = "cart-fly-image";
+    flyer.style.left = `${imageRect.left}px`;
+    flyer.style.top = `${imageRect.top}px`;
+    flyer.style.width = `${imageRect.width}px`;
+    flyer.style.height = `${imageRect.height}px`;
+    document.body.appendChild(flyer);
+
+    requestAnimationFrame(() => {
+        flyer.style.transform = `translate(${cartRect.left - imageRect.left}px, ${cartRect.top - imageRect.top}px) scale(0.15)`;
+        flyer.style.opacity = "0.2";
+    });
+
+    cartCount.classList.remove("cart-count-bump");
+    void cartCount.offsetWidth;
+    cartCount.classList.add("cart-count-bump");
+
+    setTimeout(() => flyer.remove(), 700);
+}
+
+function quickAddProductFromCatalog(id, card) {
+    const product = products[id];
+    if (!product || !canQuickAddProduct(product)) return;
+
+    cart.push({
+        title: product.title,
+        price: product.price,
+        size: "Без размера",
+        color: null,
+        productId: id
+    });
+
+    document.getElementById("cart-count").innerText = cart.length;
+    const img = card?.querySelector("img");
+    if (img) animateFlyToCartFromElement(img);
+    if (document.getElementById("mini-cart")?.classList.contains("is-open")) renderMiniCart();
+    showToast("В корзине", `${product.title} добавлен.`, "success");
+}
+
 function createProductCard(id, index = 0, options = {}) {
     const product = products[id];
     if (!product) return null;
@@ -550,7 +599,7 @@ function createProductCard(id, index = 0, options = {}) {
             <span class="card-rating">${rating.label}</span>
         </div>
         <button type="button" class="favorite-btn${isFavorite ? " active" : ""}" aria-label="В избранное">♥</button>
-        <img src="${product.img}" alt="${escapeHtml(product.title)}" loading="lazy" decoding="async" style="object-position:${product.imagePosition || "center center"};">
+        <img src="${product.img}" alt="${escapeHtml(product.title)}" width="480" height="480" loading="lazy" decoding="async" style="object-position:${product.imagePosition || "center center"};">
         <h3>${escapeHtml(product.title)}</h3>
         <div class="card-meta">
             <span class="card-meta-pill">${escapeHtml(getProductSizeSummary(product))}</span>
@@ -558,10 +607,11 @@ function createProductCard(id, index = 0, options = {}) {
         </div>
         <div class="card-spec-row" aria-label="Кратко о товаре">
             <span class="card-spec card-spec--material">${escapeHtml(truncateText(product.material, 36))}</span>
-            <span class="card-spec card-spec--delivery">Доставка по Украине · 1–3 дня</span>
+            <span class="card-spec card-spec--delivery"></span>
         </div>
         <p class="card-price">${formatPriceHtml(product.price)}</p>
-        <button type="button" class="quick-view-btn">Быстрый просмотр</button>
+        <button type="button" class="quick-view-btn" data-i18n="quickView"></button>
+        ${canQuickAddProduct(product) ? '<button type="button" class="quick-add-btn" data-i18n="quickAddToCart"></button>' : ""}
     `;
 
     card.addEventListener("click", () => openModal(id));
@@ -572,6 +622,10 @@ function createProductCard(id, index = 0, options = {}) {
     card.querySelector(".favorite-btn")?.addEventListener("click", (event) => {
         event.stopPropagation();
         toggleFavorite(id);
+    });
+    card.querySelector(".quick-add-btn")?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        quickAddProductFromCatalog(id, card);
     });
 
     return card;
@@ -625,13 +679,33 @@ function initGalleryControls() {
 
     document.addEventListener("keydown", (event) => {
         const modal = document.getElementById("productModal");
-        if (!modal || modal.style.display !== "block") return;
+        const modalOpen = modal && modal.style.display === "flex";
+        if (!modalOpen) return;
+
+        if (event.key === "Escape") {
+            closeModal();
+            event.preventDefault();
+            return;
+        }
 
         if (event.key === "ArrowLeft") {
             stepGallery(-1);
         } else if (event.key === "ArrowRight") {
             stepGallery(1);
         }
+    });
+}
+
+function initLookbook() {
+    document.querySelectorAll("[data-open-product]").forEach((btn) => {
+        if (btn.dataset.lookbookBound) return;
+        btn.dataset.lookbookBound = "1";
+        btn.addEventListener("click", () => {
+            const pid = btn.getAttribute("data-open-product");
+            if (!pid || !products[pid]) return;
+            showSection("main");
+            requestAnimationFrame(() => openModal(pid));
+        });
     });
 }
 
@@ -840,7 +914,7 @@ function renderRelatedProducts(ids) {
         card.className = "related-card";
         card.onclick = () => openModal(id);
         card.innerHTML = `
-            <img src="${product.img}" alt="${product.title}" loading="lazy" decoding="async" style="object-position:${product.imagePosition || "center center"};">
+            <img src="${product.img}" alt="${product.title}" width="200" height="200" loading="lazy" decoding="async" style="object-position:${product.imagePosition || "center center"};">
             <div class="related-card-copy">
                 <div class="related-card-title">${product.title}</div>
                 <div class="related-card-desc">${product.tag}</div>
@@ -1716,6 +1790,8 @@ function initTelegramLink() {
             telegramLink.href = payload.telegramUrl;
             telegramLink.target = "_blank";
             telegramLink.rel = "noopener noreferrer";
+        } else if (location.protocol === "https:" && typeof window.__keglingTelegramOfflineToast === "function") {
+            window.__keglingTelegramOfflineToast();
         }
     });
 }

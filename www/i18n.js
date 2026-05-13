@@ -111,6 +111,27 @@
             quickView: "Быстрый просмотр",
             shortAbout: "Кратко о товаре",
             delivery: "Доставка по Украине · 1-3 дня",
+            deliveryTrustTitle: "Доставка",
+            deliveryTrustBody: "Новая Почта и другие службы по Украине. Обычно 1–3 рабочих дня после отправки. Стоимость и трек согласуем в сообщении.",
+            returnsTrustTitle: "Возврат",
+            returnsTrustBody: "Если размер не подошёл — напиши в течение 14 дней. Обмен или возврат, если вещь без следов носки и с бирками.",
+            orderPrivacyNote: "Контакты используем только для заказа и связи по нему. Дальше — в Telegram для оформления.",
+            privacyPolicyHeading: "Данные и Telegram",
+            privacyPolicyBody: "Без рассылок без согласия. Оплата и детали — по договорённости после заказа.",
+            lookbookTitle: "Готовые образы",
+            lookbookLead: "Открой подборку — откроется карточка товара в каталоге.",
+            lookbookChip1: "Худи · кепка · носки",
+            lookbookChip2: "Рубашка · галстук",
+            lookbookChip3: "Сумка — базовый look",
+            sizeChartSummary: "Таблица размеров (EU)",
+            sizeChartColEu: "EU",
+            sizeChartColChest: "Обхват груди, см",
+            sizeChartColHeight: "Рост, см",
+            sizeChartFootnote: "Ориентир для худи и толстовок; уточняй посадку в карточке товара.",
+            quickAddToCart: "В корзину",
+            telegramUnavailableTitle: "Связь с сервером",
+            telegramUnavailableText: "Не удалось обновить служебную ссылку бота. В подвале всё равно есть переход в Telegram.",
+            footerPrivacy: "Конфиденциальность",
             noReviews: "Пока нет отзывов. Будь первым, кто поставит оценку и напишет комментарий.",
             deleteReview: "Удалить отзыв",
             chooseRatingTitle: "Выбери оценку",
@@ -244,6 +265,27 @@
             quickView: "Швидкий перегляд",
             shortAbout: "Коротко про товар",
             delivery: "Доставка по Україні · 1-3 дні",
+            deliveryTrustTitle: "Доставка",
+            deliveryTrustBody: "Нова Пошта та інші служби по Україні. Зазвичай 1–3 робочі дні після відправлення. Вартість і трек погоджуємо в повідомленні.",
+            returnsTrustTitle: "Повернення",
+            returnsTrustBody: "Якщо розмір не підійшов — напиши протягом 14 днів. Обмін або повернення, якщо річ без слідів носки та з бірками.",
+            orderPrivacyNote: "Контакти використовуємо лише для замовлення та зв'язку щодо нього. Далі — у Telegram для оформлення.",
+            privacyPolicyHeading: "Дані та Telegram",
+            privacyPolicyBody: "Без розсилок без згоди. Оплата та деталі — за домовленістю після замовлення.",
+            lookbookTitle: "Готові образи",
+            lookbookLead: "Відкрий підбірку — відкриється картка товару в каталозі.",
+            lookbookChip1: "Худі · кепка · шкарпетки",
+            lookbookChip2: "Сорочка · краватка",
+            lookbookChip3: "Сумка — базовий look",
+            sizeChartSummary: "Таблиця розмірів (EU)",
+            sizeChartColEu: "EU",
+            sizeChartColChest: "Обхват грудей, см",
+            sizeChartColHeight: "Зріст, см",
+            sizeChartFootnote: "Орієнтир для худі та світшотів; уточнюй посадку в картці товару.",
+            quickAddToCart: "У кошик",
+            telegramUnavailableTitle: "Зв'язок із сервером",
+            telegramUnavailableText: "Не вдалося оновити службове посилання бота. У підвалі все одно є перехід у Telegram.",
+            footerPrivacy: "Конфіденційність",
             noReviews: "Поки немає відгуків. Будь першим, хто поставить оцінку й напише коментар.",
             deleteReview: "Видалити відгук",
             chooseRatingTitle: "Обери оцінку",
@@ -377,6 +419,27 @@
             quickView: "Quick view",
             shortAbout: "Quick product facts",
             delivery: "Shipping across Ukraine · 1-3 days",
+            deliveryTrustTitle: "Shipping",
+            deliveryTrustBody: "Nova Poshta and other carriers across Ukraine. Usually 1–3 business days after dispatch. Cost and tracking are confirmed in chat.",
+            returnsTrustTitle: "Returns",
+            returnsTrustBody: "If the size does not fit — message us within 14 days. Exchange or return if the item is unworn and tags are intact.",
+            orderPrivacyNote: "We use your contacts only for this order and follow-up. Next step is Telegram checkout.",
+            privacyPolicyHeading: "Data & Telegram",
+            privacyPolicyBody: "No spam without consent. Payment and final details are agreed after you place the order.",
+            lookbookTitle: "Outfit ideas",
+            lookbookLead: "Tap a look — we open the hero product in the catalog.",
+            lookbookChip1: "Hoodie · cap · socks",
+            lookbookChip2: "Shirt · tie",
+            lookbookChip3: "Bag · everyday carry",
+            sizeChartSummary: "Size chart (EU)",
+            sizeChartColEu: "EU",
+            sizeChartColChest: "Chest, cm",
+            sizeChartColHeight: "Height, cm",
+            sizeChartFootnote: "Guide for hoodies & sweatshirts; check the product card for fit notes.",
+            quickAddToCart: "Add to cart",
+            telegramUnavailableTitle: "Server link",
+            telegramUnavailableText: "Could not refresh the bot service URL. The Telegram link in the footer still works.",
+            footerPrivacy: "Privacy",
             noReviews: "No reviews yet. Be the first to rate this item and leave a comment.",
             deleteReview: "Delete review",
             chooseRatingTitle: "Choose a rating",
@@ -900,13 +963,44 @@
         });
         setText("#section-about h2", t("aboutHeading"));
         setText(".about-lead", t("aboutLead"));
+        setText("#delivery-trust-title", t("deliveryTrustTitle"));
+        setText("#delivery-trust-body", t("deliveryTrustBody"));
+        setText("#returns-trust-title", t("returnsTrustTitle"));
+        setText("#returns-trust-body", t("returnsTrustBody"));
+        setText("#lookbook-title", t("lookbookTitle"));
+        setText("#lookbook-lead", t("lookbookLead"));
+        setText("#lookbook-chip-1", t("lookbookChip1"));
+        setText("#lookbook-chip-2", t("lookbookChip2"));
+        setText("#lookbook-chip-3", t("lookbookChip3"));
+        setText("#privacy-policy-heading", t("privacyPolicyHeading"));
+        setText("#privacy-policy-body", t("privacyPolicyBody"));
+        setText("#order-privacy-note", t("orderPrivacyNote"));
+        setText("#footer-privacy-link", t("footerPrivacy"));
+        setText("#size-chart-summary", t("sizeChartSummary"));
+        setText("#th-size-eu", t("sizeChartColEu"));
+        setText("#th-size-chest", t("sizeChartColChest"));
+        setText("#th-size-height", t("sizeChartColHeight"));
+        setText("#size-chart-footnote", t("sizeChartFootnote"));
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+            const key = node.getAttribute("data-i18n");
+            if (key && typeof t(key) === "string") {
+                node.textContent = t(key);
+            }
+        });
+        document.querySelectorAll(".card-spec--delivery").forEach((node) => {
+            node.textContent = t("delivery");
+        });
         setText(".support-card p", t("support"));
         setText(".footer-copy", t("footerCopy"));
-        const orderFields = document.querySelectorAll("#order-form .field > span");
-        if (orderFields[0]) orderFields[0].textContent = t("fieldName");
-        if (orderFields[1]) orderFields[1].textContent = t("fieldSurname");
-        if (orderFields[2]) orderFields[2].textContent = t("fieldPhone");
-        if (orderFields[3]) orderFields[3].textContent = t("fieldEmail");
+        const setOrderLabel = (inputId, text) => {
+            const input = document.getElementById(inputId);
+            const span = input?.closest(".field")?.querySelector(":scope > span:not(.field-error)");
+            if (span) span.textContent = text;
+        };
+        setOrderLabel("user-name", t("fieldName"));
+        setOrderLabel("user-surname", t("fieldSurname"));
+        setOrderLabel("user-phone", t("fieldPhone"));
+        setOrderLabel("user-email", t("fieldEmail"));
         setPlaceholder("#user-name", currentLanguage === "en" ? "Kirill" : currentLanguage === "uk" ? "Кирило" : "Кирилл");
         setPlaceholder("#user-surname", currentLanguage === "en" ? "Ivanov" : currentLanguage === "uk" ? "Іванов" : "Иванов");
         setText(".detail-card:nth-of-type(1) .detail-label", t("modalMaterial"));
@@ -1669,3 +1763,15 @@
         });
     }
 })();
+
+window.__keglingTelegramOfflineToast = function () {
+    if (typeof showToast !== "function") return;
+    const lang = document.documentElement.lang || "ru";
+    const pack = {
+        ru: { title: "Связь с сервером", text: "Не удалось обновить служебную ссылку бота. В подвале всё равно есть переход в Telegram." },
+        uk: { title: "Зв'язок із сервером", text: "Не вдалося оновити службове посилання бота. У підвалі все одно є перехід у Telegram." },
+        en: { title: "Server link", text: "Could not refresh the bot service URL. The Telegram link in the footer still works." }
+    };
+    const m = pack[lang] || pack.ru;
+    showToast(m.title, m.text, "error");
+};

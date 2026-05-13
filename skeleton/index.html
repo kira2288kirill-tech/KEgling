@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Описание сайта для поиска и соцсетей.">
+    <title>Скелет сайта</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">К основному содержимому</a>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="logo" href="index.html">Логотип</a>
+            <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню">
+                <span class="nav-toggle__bar" aria-hidden="true"></span>
+                <span class="nav-toggle__bar" aria-hidden="true"></span>
+                <span class="nav-toggle__bar" aria-hidden="true"></span>
+            </button>
+            <nav id="site-nav" class="site-nav" aria-label="Основное меню">
+                <ul class="site-nav__list">
+                    <li><a href="#section-1">Раздел 1</a></li>
+                    <li><a href="#section-2">Раздел 2</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="hero">
+            <div class="container hero__inner">
+                <h1 class="hero__title">Заголовок страницы</h1>
+                <p class="hero__lead">Краткий подзаголовок или ценностное предложение в одно-два предложения.</p>
+                <div class="hero__actions">
+                    <a class="btn btn--primary" href="#section-1">Основное действие</a>
+                    <a class="btn btn--ghost" href="#section-2">Вторичное</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-1" class="section">
+            <div class="container">
+                <h2 class="section__title">Раздел 1</h2>
+                <p class="section__text">Здесь контент: текст, карточки, список — по необходимости.</p>
+                <div class="grid grid--3">
+                    <article class="card">
+                        <h3 class="card__title">Карточка A</h3>
+                        <p class="card__text">Короткое описание.</p>
+                    </article>
+                    <article class="card">
+                        <h3 class="card__title">Карточка B</h3>
+                        <p class="card__text">Короткое описание.</p>
+                    </article>
+                    <article class="card">
+                        <h3 class="card__title">Карточка C</h3>
+                        <p class="card__text">Короткое описание.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-2" class="section section--alt">
+            <div class="container">
+                <h2 class="section__title">Раздел 2</h2>
+                <p class="section__text">Дополнительный блок с другим фоном для визуального ритма.</p>
+            </div>
+        </section>
+
+        <section id="contacts" class="section">
+            <div class="container container--narrow">
+                <h2 class="section__title">Контакты</h2>
+                <form class="form" action="#" method="post">
+                    <label class="form__field">
+                        <span class="form__label">Имя</span>
+                        <input class="form__input" type="text" name="name" autocomplete="name" required>
+                    </label>
+                    <label class="form__field">
+                        <span class="form__label">Email</span>
+                        <input class="form__input" type="email" name="email" autocomplete="email" required>
+                    </label>
+                    <label class="form__field">
+                        <span class="form__label">Сообщение</span>
+                        <textarea class="form__input form__textarea" name="message" rows="4" required></textarea>
+                    </label>
+                    <button class="btn btn--primary" type="submit">Отправить</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__inner">
+            <p class="site-footer__copy">© <span data-year></span> Название проекта</p>
+            <ul class="site-footer__links">
+                <li><a href="#">Политика</a></li>
+                <li><a href="#">Условия</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="js/main.js" defer></script>
+</body>
+</html>

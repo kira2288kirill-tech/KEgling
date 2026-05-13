@@ -1,40 +1,16 @@
 <!DOCTYPE html>
+<!--
+  Полная копия страницы магазина: те же script.js, i18n.js, premium-motion.js, что и index.html.
+  Открывай из папки проекта (рядом assets/, style.css). Основной вход: index.html.
+-->
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="KEgling — интернет-магазин одежды и аксессуаров: худи, рубашки, галстуки, кепки, сумки и носки с доставкой по Украине.">
-    <meta name="robots" content="index, follow">
+    <meta name="description" content="Скелет страницы KEgling для вёрстки и правок структуры.">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#24112f">
-    <link rel="canonical" href="https://k-egling.vercel.app/">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="KEgling — интернет-магазин одежды">
-    <meta property="og:description" content="Стильная одежда и аксессуары KEgling: каталог, корзина, отзывы и оформление заказа через Telegram.">
-    <meta property="og:site_name" content="KEgling">
-    <meta property="og:url" content="https://k-egling.vercel.app/">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="KEgling — интернет-магазин одежды">
-    <meta name="twitter:description" content="Каталог одежды и аксессуаров KEgling с удобным заказом через Telegram.">
-    <title>KEgling - Магазин одежды</title>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "Organization",
-                "name": "KEgling",
-                "url": "https://k-egling.vercel.app/",
-                "description": "Интернет-магазин одежды и аксессуаров с доставкой по Украине.",
-                "email": "kira2288kirill@gmail.com"
-            },
-            {
-                "@type": "WebSite",
-                "name": "KEgling",
-                "url": "https://k-egling.vercel.app/"
-            }
-        ]
-    }
-    </script>
+    <title>KEgling — магазин (копия страницы)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
@@ -189,7 +165,6 @@
                 <div class="bot-warning">
                     После кнопки откроется Telegram-бот. Контакты скопируются в буфер, и их можно будет сразу вставить в чат для завершения заказа.
                 </div>
-                <p id="order-privacy-note" class="form-privacy"></p>
                 <button type="submit" class="buy-now-btn">Перейти в Telegram и оформить</button>
             </form>
 
@@ -201,29 +176,6 @@
     <section id="section-about" class="page-section about-section">
         <h2 class="reveal-once type-section">О KEgling</h2>
         <p class="reveal-once about-lead">Мы делаем KEgling для тех, кто любит стильные вещи и аккуратные детали.</p>
-        <div class="trust-grid reveal-once">
-            <article class="trust-card">
-                <h3 id="delivery-trust-title" class="trust-card__title"></h3>
-                <p id="delivery-trust-body" class="trust-card__text"></p>
-            </article>
-            <article class="trust-card">
-                <h3 id="returns-trust-title" class="trust-card__title"></h3>
-                <p id="returns-trust-body" class="trust-card__text"></p>
-            </article>
-        </div>
-        <div class="lookbook-strip reveal-once">
-            <h3 id="lookbook-title" class="lookbook-strip__title"></h3>
-            <p id="lookbook-lead" class="lookbook-strip__lead"></p>
-            <div class="lookbook-chips" role="group" aria-label="Готовые образы">
-                <button type="button" class="lookbook-chip" data-open-product="hoodie" id="lookbook-chip-1"></button>
-                <button type="button" class="lookbook-chip" data-open-product="shirt" id="lookbook-chip-2"></button>
-                <button type="button" class="lookbook-chip" data-open-product="bag" id="lookbook-chip-3"></button>
-            </div>
-        </div>
-        <div id="privacy-policy" class="privacy-block reveal-once">
-            <h3 id="privacy-policy-heading" class="privacy-block__title"></h3>
-            <p id="privacy-policy-body" class="privacy-block__text"></p>
-        </div>
         <div class="support-card reveal-once">
             <p>Поддержка:</p>
             <a href="mailto:kira2288kirill@gmail.com" style="font-weight: 700; color: #000; text-decoration: none; border-bottom: 2px solid #000;">kira2288kirill@gmail.com</a>
@@ -235,12 +187,11 @@
         <div class="logo type-display">KEgling</div>
         <p class="footer-copy">© 2026 Все права защищены.</p>
         <div class="footer-links">
-            <a href="#privacy-policy" id="footer-privacy-link" onclick="showSection('about'); return false;"></a>
             <a href="#" id="telegram-link">Telegram</a>
         </div>
     </footer>
 
-    <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="productModal" class="modal">
         <div class="modal-content modal-content--product">
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="modal-hero">
@@ -277,23 +228,6 @@
 
             <div id="size-section" class="size-section" style="display:none;">
                 <p><b>Выберите размер:</b></p>
-                <details id="modal-size-chart" class="modal-size-chart">
-                    <summary id="size-chart-summary"></summary>
-                    <div class="size-chart-scroll">
-                        <table class="size-chart-table">
-                            <thead>
-                                <tr><th id="th-size-eu">EU</th><th id="th-size-chest">Обхват груди, см</th><th id="th-size-height">Рост, см</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>S</td><td>88–96</td><td>164–176</td></tr>
-                                <tr><td>M</td><td>96–104</td><td>170–182</td></tr>
-                                <tr><td>L</td><td>104–112</td><td>176–188</td></tr>
-                                <tr><td>XL</td><td>112–120</td><td>182–194</td></tr>
-                            </tbody>
-                        </table>
-                        <p id="size-chart-footnote" class="size-chart-footnote"></p>
-                    </div>
-                </details>
                 <div class="size-options" id="size-container"></div>
             </div>
 

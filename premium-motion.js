@@ -141,7 +141,16 @@
         if (line && gsap) gsap.set(line, { scaleX: 0, transformOrigin: "left center" });
         if (name && gsap) gsap.set(name, { opacity: 0, letterSpacing: "0.4em" });
 
+        let safetyTimer = 0;
         const done = () => {
+            if (el.getAttribute("data-preloader-finished") === "1") {
+                return;
+            }
+            el.setAttribute("data-preloader-finished", "1");
+            if (safetyTimer) {
+                window.clearTimeout(safetyTimer);
+                safetyTimer = 0;
+            }
             if (gsap && line && name) {
                 const tl = gsap.timeline({
                     onComplete: () => {
@@ -171,6 +180,7 @@
                 }, 480);
             }
         };
+        safetyTimer = window.setTimeout(done, 9000);
         if (document.readyState === "complete") {
             window.setTimeout(done, 220);
         } else {
@@ -292,11 +302,28 @@
         } else {
             document.addEventListener("kegling:preloader-done", runHero, { once: true });
             window.setTimeout(() => {
-                if (!document.getElementById("site-preloader")) {
+                if (!heroLaunched) {
                     runHero();
                 }
-            }, 2000);
+            }, 2600);
         }
+
+        window.setTimeout(() => {
+            if (document.body.classList.contains("is-booting") && !document.getElementById("site-preloader")) {
+                endBootLock();
+            }
+        }, 1500);
+
+        window.setTimeout(() => {
+            document.querySelectorAll(".reveal-once:not(.is-revealed)").forEach((el) => {
+                el.classList.add("is-revealed");
+                if (window.gsap) window.gsap.set(el, { clearProps: "opacity,transform" });
+            });
+            document.querySelectorAll(".reveal-card:not(.is-revealed)").forEach((el) => {
+                el.classList.add("is-revealed");
+                if (window.gsap) window.gsap.set(el, { clearProps: "opacity,transform" });
+            });
+        }, 3200);
 
         document.addEventListener("kegling:dom-updated", onDomUpdatedFull);
         document.addEventListener("kegling:section-changed", onSectionChange);
