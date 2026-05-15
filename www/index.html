@@ -37,8 +37,9 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Outfit:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="features-abcd.css">
 </head>
 <body>
     <div id="site-preloader" class="site-preloader" aria-hidden="true">
@@ -49,12 +50,47 @@
     </div>
     <section class="welcome-screen">
         <div class="welcome-screen__aurora" aria-hidden="true"></div>
+        <div class="welcome-screen__photo" aria-hidden="true"></div>
+        <div class="welcome-screen__shade" aria-hidden="true"></div>
         <div class="welcome-hero">
-            <h1 class="main-logo type-display">KEgling</h1>
             <p class="welcome-kicker">Колекція / 2026</p>
+            <h1 class="main-logo type-display">KEgling</h1>
+            <p id="hero-collection-count" class="welcome-collection-count"></p>
+            <div class="welcome-actions">
+                <button type="button" id="hero-cta-catalog" class="welcome-cta welcome-cta--primary"></button>
+                <button type="button" id="hero-cta-new" class="welcome-cta welcome-cta--ghost"></button>
+            </div>
             <div class="scroll-hint">Листай вниз</div>
         </div>
     </section>
+
+    <div class="hero-marquee" aria-hidden="true">
+        <div class="hero-marquee__track">
+            <span class="hero-marquee__item" data-i18n="marqueeItem1"></span>
+            <span class="hero-marquee__sep">·</span>
+            <span class="hero-marquee__item" data-i18n="marqueeItem2"></span>
+            <span class="hero-marquee__sep">·</span>
+            <span class="hero-marquee__item" data-i18n="marqueeItem3"></span>
+            <span class="hero-marquee__sep">·</span>
+            <span class="hero-marquee__item" data-i18n="marqueeItem4"></span>
+            <span class="hero-marquee__sep">·</span>
+            <span class="hero-marquee__item" data-i18n="marqueeItem1"></span>
+            <span class="hero-marquee__sep">·</span>
+            <span class="hero-marquee__item" data-i18n="marqueeItem2"></span>
+            <span class="hero-marquee__sep">·</span>
+            <span class="hero-marquee__item" data-i18n="marqueeItem3"></span>
+            <span class="hero-marquee__sep">·</span>
+            <span class="hero-marquee__item" data-i18n="marqueeItem4"></span>
+        </div>
+    </div>
+
+    <div id="header-cart-strip" class="header-cart-strip" hidden>
+        <button type="button" class="header-cart-strip__btn" id="header-cart-strip-btn">
+            <span id="header-cart-strip-count" class="header-cart-strip__count"></span>
+            <span id="header-cart-strip-thumbs" class="header-cart-strip__thumbs"></span>
+            <span id="header-cart-strip-label" class="header-cart-strip__label"></span>
+        </button>
+    </div>
 
     <header class="reveal-once site-header">
         <a href="index.html" class="logo-link"><div class="logo type-display">KEgling</div></a>
@@ -157,6 +193,20 @@
     <section id="section-cart" class="page-section">
         <div class="section-shell">
             <h2 class="reveal-once type-section">Ваша корзина</h2>
+            <ol id="checkout-progress" class="checkout-progress" aria-label="Оформление заказа">
+                <li class="checkout-progress__step is-active" data-step="cart">
+                    <span class="checkout-progress__dot"></span>
+                    <span id="checkout-step-cart-label" class="checkout-progress__label"></span>
+                </li>
+                <li class="checkout-progress__step" data-step="details">
+                    <span class="checkout-progress__dot"></span>
+                    <span id="checkout-step-details-label" class="checkout-progress__label"></span>
+                </li>
+                <li class="checkout-progress__step" data-step="telegram">
+                    <span class="checkout-progress__dot"></span>
+                    <span id="checkout-step-telegram-label" class="checkout-progress__label"></span>
+                </li>
+            </ol>
             <div id="cart-list" class="cart-list"></div>
             <hr class="divider">
             <h3 id="cart-total">Итого: 0 ₴</h3>
@@ -214,6 +264,7 @@
         <div class="lookbook-strip reveal-once">
             <h3 id="lookbook-title" class="lookbook-strip__title"></h3>
             <p id="lookbook-lead" class="lookbook-strip__lead"></p>
+            <div class="lookbook-grid" id="lookbook-grid" role="list"></div>
             <div class="lookbook-chips" role="group" aria-label="Готовые образы">
                 <button type="button" class="lookbook-chip" data-open-product="hoodie" id="lookbook-chip-1"></button>
                 <button type="button" class="lookbook-chip" data-open-product="shirt" id="lookbook-chip-2"></button>
@@ -245,7 +296,10 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="modal-hero">
                 <div class="modal-media">
-                    <img id="modalImg" src="" alt="Товар" class="modal-image">
+                    <div class="modal-image-stage">
+                        <img id="modalImg" src="" alt="Товар" class="modal-image">
+                        <div id="modal-gallery-dots" class="modal-gallery-dots" role="tablist" aria-label="Фото товара"></div>
+                    </div>
                     <div id="modalGallery" class="modal-gallery"></div>
                 </div>
                 <div class="modal-copy">
@@ -304,6 +358,12 @@
 
             <button id="modal-add-btn" class="buy-now-btn" type="button" onclick="addToCart()">Добавить в корзину</button>
 
+            <ul id="modal-trust" class="modal-trust" aria-label="Условия заказа">
+                <li><span class="modal-trust__icon" aria-hidden="true">🚚</span><span id="modal-trust-delivery"></span></li>
+                <li><span class="modal-trust__icon" aria-hidden="true">💬</span><span id="modal-trust-payment"></span></li>
+                <li><span class="modal-trust__icon" aria-hidden="true">↩</span><span id="modal-trust-return"></span></li>
+            </ul>
+
             <div class="related-section">
                 <div class="related-head">
                     <h3>Подойдет вместе с этим</h3>
@@ -359,5 +419,6 @@
     <script defer src="script.js"></script>
     <script defer src="i18n.js"></script>
     <script defer src="premium-motion.js"></script>
+    <script defer src="features-abcd.js"></script>
 </body>
 </html>

@@ -87,12 +87,14 @@
 
     function observeCards(root) {
         const list = root && root.querySelectorAll ? root.querySelectorAll(".reveal-card") : document.querySelectorAll(".reveal-card");
+        const instantReveal = reduceMotion() || list.length > 14;
         list.forEach((el) => {
             if (el.getAttribute("data-reveal-observed")) return;
             if (!isElementInLiveLayout(el)) return;
             el.setAttribute("data-reveal-observed", "1");
-            if (reduceMotion()) {
+            if (instantReveal) {
                 el.classList.add("is-revealed");
+                if (gsap) gsap.set(el, { clearProps: "all" });
                 return;
             }
             if (gsap) gsap.set(el, { opacity: 0, y: 20 });
@@ -225,7 +227,7 @@
     }
 
     function initNavMicro() {
-        if (reduceMotion() || !gsap) return;
+        if (reduceMotion() || appPerformanceLite || !gsap) return;
         document.querySelectorAll("header nav a").forEach((link) => {
             if (isCoarse()) return;
             const base = "0.12em";
@@ -248,7 +250,7 @@
     }
 
     function initTap() {
-        if (reduceMotion()) return;
+        if (reduceMotion() || appPerformanceLite) return;
         const sel = "button, .buy-now-btn, .favorite-btn, .quick-view-btn, .sidebar-link, .review-star, .gallery-thumb, .back-link, .active-filter-clear";
         const down = (e) => {
             const t = e.target.closest(sel);

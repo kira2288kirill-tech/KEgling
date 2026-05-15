@@ -123,6 +123,25 @@
             lookbookChip1: "Худи · кепка · носки",
             lookbookChip2: "Рубашка · галстук",
             lookbookChip3: "Сумка — базовый look",
+            heroCtaCatalog: "Смотреть каталог",
+            heroCtaNew: "Новинка",
+            heroCollectionCount: "{n} позиций в коллекции",
+            marqueeItem1: "Доставка по Украине 1–3 дня",
+            marqueeItem2: "Заказ через Telegram",
+            marqueeItem3: "KEgling · коллекция 2026",
+            marqueeItem4: "Одежда и аксессуары",
+            checkoutStepCart: "Корзина",
+            checkoutStepDetails: "Контакты",
+            checkoutStepTelegram: "Telegram",
+            modalTrustDelivery: "Доставка по Украине 1–3 дня",
+            modalTrustPayment: "Оплата и детали в чате",
+            modalTrustReturn: "Обмен в течение 14 дней",
+            cartEmptyTitle: "Корзина пуста",
+            cartEmptyText: "Добавь вещи из каталога — они появятся здесь.",
+            headerCartOpen: "Открыть корзину",
+            lookbookTile1: "City layer",
+            lookbookTile2: "Smart casual",
+            lookbookTile3: "Daily carry",
             sizeChartSummary: "Таблица размеров (EU)",
             sizeChartColEu: "EU",
             sizeChartColChest: "Обхват груди, см",
@@ -277,6 +296,25 @@
             lookbookChip1: "Худі · кепка · шкарпетки",
             lookbookChip2: "Сорочка · краватка",
             lookbookChip3: "Сумка — базовий look",
+            heroCtaCatalog: "Дивитись каталог",
+            heroCtaNew: "Новинка",
+            heroCollectionCount: "{n} позицій у колекції",
+            marqueeItem1: "Доставка по Україні 1–3 дні",
+            marqueeItem2: "Замовлення в Telegram",
+            marqueeItem3: "KEgling · колекція 2026",
+            marqueeItem4: "Одяг і аксесуари",
+            checkoutStepCart: "Кошик",
+            checkoutStepDetails: "Контакти",
+            checkoutStepTelegram: "Telegram",
+            modalTrustDelivery: "Доставка по Україні 1–3 дні",
+            modalTrustPayment: "Оплата та деталі в чаті",
+            modalTrustReturn: "Обмін протягом 14 днів",
+            cartEmptyTitle: "Кошик порожній",
+            cartEmptyText: "Додай речі з каталогу — вони з’являться тут.",
+            headerCartOpen: "Відкрити кошик",
+            lookbookTile1: "City layer",
+            lookbookTile2: "Smart casual",
+            lookbookTile3: "Daily carry",
             sizeChartSummary: "Таблиця розмірів (EU)",
             sizeChartColEu: "EU",
             sizeChartColChest: "Обхват грудей, см",
@@ -431,6 +469,25 @@
             lookbookChip1: "Hoodie · cap · socks",
             lookbookChip2: "Shirt · tie",
             lookbookChip3: "Bag · everyday carry",
+            heroCtaCatalog: "View catalog",
+            heroCtaNew: "New in",
+            heroCollectionCount: "{n} items in collection",
+            marqueeItem1: "Delivery across Ukraine 1–3 days",
+            marqueeItem2: "Order via Telegram",
+            marqueeItem3: "KEgling · 2026 collection",
+            marqueeItem4: "Clothing & accessories",
+            checkoutStepCart: "Cart",
+            checkoutStepDetails: "Details",
+            checkoutStepTelegram: "Telegram",
+            modalTrustDelivery: "Ukraine delivery 1–3 days",
+            modalTrustPayment: "Payment details in chat",
+            modalTrustReturn: "Exchange within 14 days",
+            cartEmptyTitle: "Cart is empty",
+            cartEmptyText: "Add items from the catalog — they will show up here.",
+            headerCartOpen: "Open cart",
+            lookbookTile1: "City layer",
+            lookbookTile2: "Smart casual",
+            lookbookTile3: "Daily carry",
             sizeChartSummary: "Size chart (EU)",
             sizeChartColEu: "EU",
             sizeChartColChest: "Chest, cm",
@@ -892,6 +949,9 @@
         if (nav) {
             nav.innerHTML = `${t("navCart")} (<span id="cart-count">${cart.length}</span>)`;
         }
+        if (typeof window.keglingRefreshCartChrome === "function") {
+            window.keglingRefreshCartChrome();
+        }
     }
 
     function applyStaticTexts() {
@@ -972,6 +1032,22 @@
         setText("#lookbook-chip-1", t("lookbookChip1"));
         setText("#lookbook-chip-2", t("lookbookChip2"));
         setText("#lookbook-chip-3", t("lookbookChip3"));
+        setText("#hero-cta-catalog", t("heroCtaCatalog"));
+        setText("#hero-cta-new", t("heroCtaNew"));
+        const heroCount = document.getElementById("hero-collection-count");
+        if (heroCount) {
+            heroCount.textContent = t("heroCollectionCount").replace("{n}", String(catalogOrder.length));
+        }
+        setText("#checkout-step-cart-label", t("checkoutStepCart"));
+        setText("#checkout-step-details-label", t("checkoutStepDetails"));
+        setText("#checkout-step-telegram-label", t("checkoutStepTelegram"));
+        setText("#modal-trust-delivery", t("modalTrustDelivery"));
+        setText("#modal-trust-payment", t("modalTrustPayment"));
+        setText("#modal-trust-return", t("modalTrustReturn"));
+        setText("#header-cart-strip-label", t("headerCartOpen"));
+        if (typeof window.keglingRenderLookbookGrid === "function") {
+            window.keglingRenderLookbookGrid();
+        }
         setText("#privacy-policy-heading", t("privacyPolicyHeading"));
         setText("#privacy-policy-body", t("privacyPolicyBody"));
         setText("#order-privacy-note", t("orderPrivacyNote"));
@@ -1604,6 +1680,9 @@
     resetOrderState = function () {
         cart = [];
         updateCartCountUi();
+        if (typeof window.keglingSetCheckoutStep === "function") {
+            window.keglingSetCheckoutStep("cart");
+        }
         clearOrderFieldErrors();
         document.getElementById("order-form").reset();
         document.getElementById("order-form").style.display = "none";
@@ -1762,6 +1841,7 @@
             }
         });
     }
+    window.__keglingTranslate = t;
 })();
 
 window.__keglingTelegramOfflineToast = function () {

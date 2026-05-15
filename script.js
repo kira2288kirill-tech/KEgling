@@ -30,7 +30,21 @@ function isAndroidAppWebView() {
     return hasCapacitor || (isAndroid && isWebView);
 }
 
-const APP_PERFORMANCE_LITE = isAndroidAppWebView();
+function shouldUsePerformanceLite() {
+    if (isAndroidAppWebView()) return true;
+    if (window.matchMedia && window.matchMedia("(max-width: 768px)").matches) return true;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && (conn.saveData || conn.effectiveType === "slow-2g" || conn.effectiveType === "2g")) {
+        return true;
+    }
+    if (typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4) {
+        return true;
+    }
+    return false;
+}
+
+const APP_PERFORMANCE_LITE = shouldUsePerformanceLite();
 if (APP_PERFORMANCE_LITE) {
     document.documentElement.classList.add("app-performance-lite");
 }
@@ -407,6 +421,23 @@ function getProductBadge(id) {
     return badges[id] || "Вибір";
 }
 
+function getPromoBadge(id) {
+    if (id === "sweatshirt") return "NEW";
+    return "";
+}
+
+function getProductHoverImage(product) {
+    const gallery = product.gallery || product.variants?.[0]?.gallery;
+    if (Array.isArray(gallery) && gallery.length > 1) return gallery[1];
+    return null;
+}
+
+function formatCardIndex(index, total) {
+    const n = String(index).padStart(2, "0");
+    const t = String(total).padStart(2, "0");
+    return `${n} / ${t}`;
+}
+
 function getProductAvailability(id) {
     const availability = {
         hoodie: "В наличии",
@@ -575,7 +606,7 @@ function quickAddProductFromCatalog(id, card) {
     });
 
     document.getElementById("cart-count").innerText = cart.length;
-    const img = card?.querySelector("img");
+    const img = card?.querySelector(".card-img--primary") || card?.querySelector("img");
     if (img) animateFlyToCartFromElement(img);
     if (document.getElementById("mini-cart")?.classList.contains("is-open")) renderMiniCart();
     showToast("В корзине", `${product.title} добавлен.`, "success");
@@ -590,16 +621,28 @@ function createProductCard(id, index = 0, options = {}) {
     const isFavorite = favoriteIds.has(id);
     const compactClass = options.compact ? " compact" : "";
     const availability = getProductAvailability(id);
+    const promoBadge = getPromoBadge(id);
+    const hoverImg = getProductHoverImage(product);
+    const cardIndex = options.catalogIndex && options.catalogTotal
+        ? formatCardIndex(options.catalogIndex, options.catalogTotal)
+        : "";
+    const hoverClass = hoverImg ? " has-hover-image" : "";
 
-    card.className = `card${compactClass} reveal-card`.trim();
+    card.className = `card${compactClass}${hoverClass} reveal-card`.trim();
     card.dataset.productId = id;
     card.innerHTML = `
+        ${cardIndex ? `<span class="card-index">${cardIndex}</span>` : ""}
         <div class="card-badges">
             <span class="card-badge">${getProductBadge(id)}</span>
+            ${promoBadge && promoBadge !== "LAST" ? `<span class="card-badge card-badge--promo">${promoBadge}</span>` : ""}
+            ${availability.toLowerCase().includes("мало") ? '<span class="card-badge card-badge--low">LAST</span>' : ""}
             <span class="card-rating">${rating.label}</span>
         </div>
         <button type="button" class="favorite-btn${isFavorite ? " active" : ""}" aria-label="В избранное">♥</button>
-        <img src="${product.img}" alt="${escapeHtml(product.title)}" width="480" height="480" loading="lazy" decoding="async" style="object-position:${product.imagePosition || "center center"};">
+        <div class="card-media">
+            <img class="card-img card-img--primary" src="${product.img}" alt="${escapeHtml(product.title)}" width="480" height="480" loading="lazy" decoding="async" style="object-position:${product.imagePosition || "center center"};">
+            ${hoverImg ? `<img class="card-img card-img--hover" src="${hoverImg}" alt="" width="480" height="480" loading="lazy" decoding="async" aria-hidden="true" style="object-position:${product.imagePosition || "center center"};">` : ""}
+        </div>
         <h3>${escapeHtml(product.title)}</h3>
         <div class="card-meta">
             <span class="card-meta-pill">${escapeHtml(getProductSizeSummary(product))}</span>
@@ -726,6 +769,30 @@ function syncGalleryImage() {
     document.querySelectorAll(".gallery-nav").forEach((button) => {
         button.style.display = showNav ? "grid" : "none";
     });
+    renderModalGalleryDots();
+}
+
+function renderModalGalleryDots() {
+    const dotsWrap = document.getElementById("modal-gallery-dots");
+    if (!dotsWrap) return;
+    dotsWrap.innerHTML = "";
+    if (currentGalleryImages.length < 2) {
+        dotsWrap.classList.remove("is-visible");
+        return;
+    }
+    dotsWrap.classList.add("is-visible");
+    currentGalleryImages.forEach((_, index) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = `modal-gallery-dot${index === currentGalleryIndex ? " active" : ""}`;
+        dot.setAttribute("aria-label", `Фото ${index + 1}`);
+        dot.addEventListener("click", (event) => {
+            event.stopPropagation();
+            currentGalleryIndex = index;
+            syncGalleryImage();
+        });
+        dotsWrap.appendChild(dot);
+    });
 }
 
 function initCatalogFilters() {
@@ -816,7 +883,8 @@ function saveFavorites() {
 }
 
 function toggleFavorite(id) {
-    if (favoriteIds.has(id)) {
+    const wasFavorite = favoriteIds.has(id);
+    if (wasFavorite) {
         favoriteIds.delete(id);
         showToast("Убрано из избранного", "Товар больше не сохранен.", "success");
     } else {
@@ -826,6 +894,11 @@ function toggleFavorite(id) {
 
     saveFavorites();
     renderCatalog();
+    if (!wasFavorite) {
+        const btn = document.querySelector(`.card[data-product-id="${id}"] .favorite-btn`);
+        btn?.classList.add("favorite-btn--pop");
+        window.setTimeout(() => btn?.classList.remove("favorite-btn--pop"), 500);
+    }
 }
 
 function renderColorOptions(product) {
@@ -1132,8 +1205,9 @@ function renderCatalog() {
 
     visibleIds = sortCatalogIds(visibleIds);
 
+    const catalogTotal = visibleIds.length;
     visibleIds.forEach((id, index) => {
-        const card = createProductCard(id, index);
+        const card = createProductCard(id, index, { catalogIndex: index + 1, catalogTotal });
         if (card) grid.appendChild(card);
     });
 
@@ -1153,9 +1227,11 @@ function initCatalogToolbar() {
     const sortSelect = document.getElementById("catalog-sort");
     const favoritesButton = document.getElementById("favorites-nav-link");
 
+    let searchDebounce = 0;
     searchInput?.addEventListener("input", (event) => {
         searchQuery = event.target.value.trim();
-        renderCatalog();
+        window.clearTimeout(searchDebounce);
+        searchDebounce = window.setTimeout(() => renderCatalog(), 180);
     });
 
     sortSelect?.addEventListener("change", (event) => {
@@ -1640,13 +1716,26 @@ function renderCart() {
     });
 
     if (!cart.length) {
-        list.innerHTML = '<div class="cart-empty">Корзина пока пустая. Добавь товар и возвращайся сюда.</div>';
+        list.innerHTML = `
+            <div class="cart-empty-state">
+                <div class="cart-empty-state__icon" aria-hidden="true">🛍</div>
+                <h4 class="cart-empty-state__title" data-i18n="cartEmptyTitle">Корзина пуста</h4>
+                <p class="cart-empty-state__text" data-i18n="cartEmptyText">Добавь вещи из каталога — они появятся здесь.</p>
+            </div>`;
         formNode.style.display = "none";
         checkoutBtn.style.display = "block";
+        if (typeof window.keglingSetCheckoutStep === "function") {
+            window.keglingSetCheckoutStep("cart");
+        }
+    } else if (formNode.style.display === "block" && typeof window.keglingSetCheckoutStep === "function") {
+        window.keglingSetCheckoutStep("details");
     }
 
     totalNode.innerText = `Итого: ${formatPrice(total)}`;
     if (document.getElementById("mini-cart")?.classList.contains("is-open")) renderMiniCart();
+    if (typeof window.keglingRefreshCartChrome === "function") {
+        window.keglingRefreshCartChrome();
+    }
 }
 
 function removeItem(index) {
@@ -1667,11 +1756,28 @@ window.onclick = (event) => {
     }
 };
 
-window.onscroll = () => {
+(function initScrollToTopButton() {
     const btn = document.getElementById("btn-up");
     if (!btn) return;
-    btn.style.display = window.scrollY > 300 ? "block" : "none";
-};
+    let scrollRaf = 0;
+    let lastY = -1;
+    const update = () => {
+        scrollRaf = 0;
+        const y = window.scrollY || 0;
+        if (y === lastY) return;
+        lastY = y;
+        btn.style.display = y > 300 ? "block" : "none";
+    };
+    window.addEventListener(
+        "scroll",
+        () => {
+            if (scrollRaf) return;
+            scrollRaf = requestAnimationFrame(update);
+        },
+        { passive: true }
+    );
+    update();
+})();
 
 function showOrderForm() {
     if (cart.length === 0) {
@@ -1681,6 +1787,9 @@ function showOrderForm() {
 
     document.getElementById("order-form").style.display = "block";
     document.getElementById("checkout-btn").style.display = "none";
+    if (typeof window.keglingSetCheckoutStep === "function") {
+        window.keglingSetCheckoutStep("details");
+    }
     document.getElementById("order-form").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -1737,6 +1846,9 @@ function submitOrder(event) {
     const botUrl = `https://t.me/${BOT_USERNAME}?start=${payload}`;
 
     copyText(contactLine);
+    if (typeof window.keglingSetCheckoutStep === "function") {
+        window.keglingSetCheckoutStep("telegram");
+    }
     showToast("Переход в Telegram", `Открою бота. Твои данные уже скопированы, осталось вставить их в чат и завершить заказ на ${formatPrice(total)}.`, "success");
 
     window.setTimeout(() => {

@@ -1,0 +1,143 @@
+/**
+ * KEgling Design System — Premium Tech (2026)
+ * Linear · Stripe · Vercel · Notion · Arc
+ */
+:root {
+    color-scheme: light;
+
+    /* Spacing (4px base) */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+
+    /* Typography */
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: var(--font-sans);
+    --font-ui: var(--font-sans);
+
+    --text-xs: 0.6875rem;
+    --text-sm: 0.8125rem;
+    --text-base: 0.9375rem;
+    --text-lg: 1.0625rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: clamp(2rem, 5vw, 3rem);
+    --text-hero: clamp(2.75rem, 8vw, 4.5rem);
+
+    --leading-tight: 1.15;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.65;
+
+    --tracking-tight: -0.03em;
+    --tracking-normal: -0.011em;
+    --tracking-wide: 0.06em;
+    --tracking-wider: 0.12em;
+
+    /* Radii */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-pill: 999px;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-lux: var(--ease-out);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 450ms;
+
+    /* Light theme */
+    --bg: #fafafa;
+    --bg-elevated: #ffffff;
+    --bg-subtle: #f4f4f5;
+    --bg-muted: #ececee;
+    --surface: #ffffff;
+    --surface-strong: #ffffff;
+    --text: #09090b;
+    --text-secondary: #3f3f46;
+    --muted: #71717a;
+    --line: rgba(9, 9, 11, 0.08);
+    --line-strong: rgba(9, 9, 11, 0.14);
+    --dark: #09090b;
+
+    --accent: #5e6ad2;
+    --accent-hover: #4f5bc4;
+    --accent-strong: #434ce8;
+    --accent-soft: rgba(94, 106, 210, 0.12);
+    --accent-cool: #5e6ad2;
+    --accent-cool-soft: rgba(94, 106, 210, 0.1);
+
+    --success: #16a34a;
+    --danger: #dc2626;
+
+    --shadow-xs: 0 1px 2px rgba(9, 9, 11, 0.04);
+    --shadow-sm: 0 2px 8px rgba(9, 9, 11, 0.06);
+    --shadow-md: 0 8px 24px rgba(9, 9, 11, 0.08);
+    --shadow-lg: 0 16px 48px rgba(9, 9, 11, 0.12);
+    --shadow: var(--shadow-md);
+
+    --glass: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(9, 9, 11, 0.06);
+    --overlay: rgba(9, 9, 11, 0.5);
+
+    --hero-glow: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(94, 106, 210, 0.15), transparent);
+    --btn-primary-bg: #09090b;
+    --btn-primary-fg: #fafafa;
+    --btn-luxe: var(--btn-primary-bg);
+    --card-shine: none;
+
+    --header-height: 56px;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg: #09090b;
+    --bg-elevated: #18181b;
+    --bg-subtle: #111113;
+    --bg-muted: #27272a;
+    --surface: #18181b;
+    --surface-strong: #1f1f23;
+    --text: #fafafa;
+    --text-secondary: #d4d4d8;
+    --muted: #a1a1aa;
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.14);
+
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-strong: #6366f1;
+    --accent-soft: rgba(129, 140, 248, 0.15);
+    --accent-cool-soft: rgba(129, 140, 248, 0.12);
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.45);
+
+    --glass: rgba(24, 24, 27, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --overlay: rgba(0, 0, 0, 0.65);
+
+    --hero-glow: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(129, 140, 248, 0.12), transparent);
+    --btn-primary-bg: #fafafa;
+    --btn-primary-fg: #09090b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --duration-fast: 0ms;
+        --duration-normal: 0ms;
+        --duration-slow: 0ms;
+    }
+}
